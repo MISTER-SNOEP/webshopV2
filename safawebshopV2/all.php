@@ -1,66 +1,101 @@
 <!-- All products page -->
 <!-- Displays all products with link to detailed product page --> 
+<?php
+require 'db.example.php';
+
+$sql = "
+SELECT
+    p.product_id,
+    p.name,
+    p.price,
+    AVG(r.rating) AS avg_rating,
+    COUNT(r.review_id) AS reviews_count
+FROM products p
+LEFT JOIN reviews r ON r.product_id = p.product_id
+GROUP BY p.product_id, p.name, p.price
+ORDER BY p.product_id DESC
+";
+
+$result = $mysqli->query($sql);
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>all | Mister Snoep</title>
-    <style>
-        .items_show {
-            display: flex;
-            margin: 0 10% 0 10%;
-            flex-flow: row wrap;
-            justify-content: space-around;
-            width: 50%;
-        }
-        .item {
-            background-color: #e1e3e6;
-            height: 150px;
-            width: 200px;
-            margin: 10px;
-            padding: 5px;
-            border-radius: 5px;
-            box-shadow: 5px 5px 10px #c1c3ca,
-                        5px 5px 20px #c1c3ca;
-        }
-    </style>
-</head>
+</head> 
 <body>
-    <header>
-        <center>
-        <?php include 'header.php'; ?>
-        <hr>
-    </header>
-    <?php
+
+
+
+<header>
+    <center>
+    <?php include 'header.php'; ?>
+    </center>
+    <hr>
+</header>
+
+<main class="page">
+  <h1>Catalog</h1>
+
+  <section class="catalog-grid">
     
-    $servername = "localhost";
-    $username = "admin";
-    $password = "admin";
-    $dbname = "candyshop";
+    <?php while ($row = $result->fetch_assoc()): ?>
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
+      <?php // lets make it 4star if no rewiews
+        $id = (int)$row['product_id'];
+        $name = $row['name'];
+        $price = (float)$row['price'];
 
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+        if ((int)$row['reviews_count'] > 0) {
+          $stars = (int)round($row['avg_rating']);
+        } else {
+          $stars = 4;
+        }
 
-    $query = "SELECT * FROM products";
-    $result = $conn->query($query);
 
-    echo "<div class='items_show'>";
+        if ($stars < 1) $stars = 1;
+        if ($stars > 5) $stars = 5;
 
-    foreach ($result as $row) {
-        echo "<div class='item'>";
-        echo "<h2>" . $row['name'] . "</h2>";
-        echo "<p>Price: $" . $row['price'] . "</p>";
-        echo "<p>Quantity: " . $row['stock'] . "</p>";
-        echo "<button><a href='product.php?id=" . $row['product_id'] . "'>Info</a></button>";
-        echo "</div>";
-    }
 
-    echo "</div>";
+        $img = "images/products/" . $id . ".jpg";
+      ?>
 
-    ?>
+      <div class="product-card" onclick="window.location='product.php?id=<?php echo $id; ?>'">
+        <div class="product-imgwrap">
+          <img src="<?php echo $img; ?>"
+               alt="<?php echo htmlspecialchars($name); ?>"
+               onerror="this.src='webshopV2/savawebshopV2/images/products/placeholder.jpg';">
+        </div>
+
+        <div class="product-info">
+          <div class="product-name"><?php echo htmlspecialchars($name); ?></div>
+
+          <div class="product-meta">
+            <span>Candies</span>
+            <span class="product-price">€<?php echo number_format($price, 2); ?></span>
+          </div>
+
+          <div class="product-rating">
+            <?php for ($i = 1; $i <= 5; $i++): ?>
+              <span class="star <?php if ($i <= $stars) echo 'filled'; ?>">★</span>
+            <?php endfor; ?>
+          </div>
+        </div>
+
+        <form class="add-to-cart" method="post" action="cart.php" onclick="event.stopPropagation();">
+          <input type="hidden" name="product_id" value="<?php echo $id; ?>">
+          <button class="add-btn" type="submit" name="add_to_cart">To cart</button>
+        </form>
+      </div>
+
+        <?php endwhile; ?>
+    </section>
+</main>
 </body>
 </html>
