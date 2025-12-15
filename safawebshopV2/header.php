@@ -17,7 +17,7 @@
             <div class="nav-buttons">
                 <a href="">Home</a>
                 <a href="all.php">Products</a>
-                <a href="hui2.php">Cart</a>
+                <a href="cart.php">Cart</a>
             </div>
         </div>
     </nav>
