@@ -68,6 +68,21 @@
             }
 
             $conn = connection();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_item'])) {
+                $cart_id = (int)$_POST['cart_id'];
+                $product_id = (int)$_POST['id'];
+                $deleteStmt = $conn->prepare("DELETE FROM cart_items WHERE cart_id = ? AND id = ?");
+                $deleteStmt->bind_param("ii", $cart_id, $product_id);
+                $deleteStmt->execute();
+                $deleteStmt->close();
+
+                // Redirect (PRG), чтобы избежать повторного удаления при обновлении
+                header("Location: cart.php");
+                exit;
+            }
+
+
             $user_id = 1; // Needs to be changed to dynamic user ID after login implementation!
 
             $cartQuery = $conn->prepare("
@@ -88,13 +103,16 @@
             $cart_id = $cart['cart_id'];
 
             $query = $conn->prepare("
-                SELECT 
-                    ci.unit_price,
-                    ci.quantity,
-                    p.name AS product_name
+                SELECT
+                ci.id, 
+                ci.product_id,
+                ci.unit_price,
+                ci.quantity,
+                p.name AS product_name
                 FROM cart_items ci
                 JOIN products p ON ci.product_id = p.product_id
                 WHERE ci.cart_id = ?
+
             ");
             $query->bind_param("i", $cart_id);
             $query->execute();
@@ -115,6 +133,13 @@
                         <td>' . htmlspecialchars($row['product_name']) . '</td>
                         <td style="text-align:center;">€' . number_format($row['unit_price'], 2) . '</td>
                         <td style="text-align:center;">' . $row['quantity'] . '</td>
+                        <td style="text-align:center;">
+                        <form method="post" action="cart.php" style="display:inline;">
+                            <input type="hidden" name="cart_id" value="' . $cart_id . '">
+                            <input type="hidden" name="id" value="' . $row['id'] . '">
+                            <button type="submit" name="delete_item">Delete</button>
+                        </form>
+                        </td>
                     </tr>';
             }
 
@@ -138,4 +163,5 @@
         </div>
     </section>
 </body>
+
 </html>
