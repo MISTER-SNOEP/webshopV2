@@ -71,26 +71,41 @@ $added = $_GET['added'] ?? '';
 </head>
 <body>
 
-<h1><?php echo htmlspecialchars($product['name']); ?></h1>
-<p>Prijs: <?php echo number_format((float)$product['price'], 2); ?> €</p>
+<div class="product-page">
 
-<form action="product.php?id=<?php echo $product_id; ?>" method="post">
-    <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
-    <button type="submit" name="adding" id="adding">Add to Cart</button>
-</form>
+  <div class="product-image">
+    <img src="images/<?php echo $product_id; ?>.jpg"
+         alt="<?php echo htmlspecialchars($product['name']); ?>">
+  </div>
 
-<?php if ($added): ?>
-    <div style="background:#e0ffe0; padding:10px; max-width:600px; margin-top:10px;">
-        <p>Product added to cart!</p>
+  <div class="product-info-big">
+    <h1><?php echo htmlspecialchars($product['name']); ?></h1>
+
+    <!-- PLACEHOLDER DESCRIPTION (later we can load it from DB) -->
+    <p class="product-description">
+      Here will be the product description. You can write a short or long one — the layout supports it.
+    </p>
+
+    <div class="product-price-big">
+      <?php echo number_format((float)$product['price'], 2); ?> €
     </div>
-<?php endif; ?>
 
-<?php if ($errors): ?>
-    <div style="background:#ffe0e0; padding:10px; max-width:600px; margin-top:10px;">
-        <p><?php echo htmlspecialchars($errors); ?></p>
-    </div>
-<?php endif; ?>
+    <form action="product.php?id=<?php echo $product_id; ?>" method="post">
+      <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
+      <button type="submit" name="adding" class="buy-btn">Add to Cart</button>
+    </form>
 
+    <?php if ($added): ?>
+      <div class="msg success">Product added to cart!</div>
+    <?php endif; ?>
+
+    <?php if ($errors): ?>
+      <div class="msg error"><?php echo htmlspecialchars($errors); ?></div>
+    <?php endif; ?>
+  </div>
+</div>
+
+<div class="product-content-center">
 <hr>
 <h2>Reviews</h2>
 
@@ -101,7 +116,7 @@ include 'reviews_list.php';
 
 <h3>Schrijf een review</h3>
 
-<form method="post" action="reviews_add.php" style="max-width:600px;">
+<form method="post" action="reviews_add.php" style="max-width:600px;" class="review-form">
     <input type="hidden" name="product_id" value="<?php echo $product_id; ?>">
 
     <p>
@@ -130,5 +145,6 @@ include 'reviews_list.php';
         Review plaatsen
     </button>
 </form>
+</div>
 </body>
 </html>

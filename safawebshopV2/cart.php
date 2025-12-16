@@ -7,46 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart | Mister Snoep</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Oswald:wght@300&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Playwrite+DE+SAS:wght@100..400&display=swap');
-        body {
-            background-color: #f3f4f6;
-            color: black;
-            font-family: "Open Sans";
-            margin: 0 10% 0 10%;
-        }
-        hr::not(#dass) {
-            margin: 0 5% 1% 5%;
-        }
-        .cart {
-            background-color: #e1e3e6;
-            height: 70%;
-            margin: auto;
-            padding: 5px;
-            border-radius: 5px;
-            box-shadow: 5px 5px 10px #c1c3ca,
-                        5px 5px 20px #c1c3ca;
-        }
-        .inside {
-            color: black;
-        }
-        table {
-            text-align: left;
-        }
-        img {
-            width: 100px;
-            height: 100px;
-        }
-        button {
-            width: fit-content;
-            border: none;
-            border-radius: 15px;
-            background-color: gray;
-            right: auto;
-            font-size: 25px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
@@ -54,7 +15,9 @@
         <?php include 'header.php'; ?>
         <hr>
     </header>
-    <section class="cart">
+    <section class="cart-page">
+        <div class="cart-box">
+
         <h1 id="cartHead">Your cart</h1>
         <div class="inside">
             <?php
@@ -159,7 +122,7 @@
             echo '<button>Checkout</button>';
             ?>
 
-
+        </div>
         </div>
     </section>
 </body>
